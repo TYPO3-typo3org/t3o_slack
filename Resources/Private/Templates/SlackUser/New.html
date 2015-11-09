@@ -1,0 +1,47 @@
+<f:layout name="Default"/>
+
+This template displays a NEW form for the current domain object.
+
+If you modify this template, do not forget to change the overwrite settings
+in /Configuration/ExtensionBuilder/settings.yaml:
+Resources:
+Private:
+Templates:
+New.html: keep
+
+Otherwise your changes will be overwritten the next time you save the extension in the extension builder
+
+<f:section name="main">
+	<h1>Connect your account to TYPO3 slack</h1>
+
+	<f:flashMessages/>
+
+	<f:render partial="FormErrors"/>
+
+	<f:form action="create" name="newSlackUser" object="{newSlackUser}">
+		<div class="b-form-row">
+			<label for="firstname">first name</label>
+
+			<div class="b-form-inputs">
+				<f:form.textfield id="t3o_slack_firstname" property="firstname"/>
+			</div>
+		</div>
+		<div class="b-form-row">
+			<label for="lastname">last name</label>
+
+			<div class="b-form-inputs">
+				<f:form.textfield id="t3o_slack_lastname" property="lastname"/>
+			</div>
+		</div>
+		<div class="b-form-row">
+			<label for="e-mail">This e-mail will be used for registration:&nbsp;</label>
+
+			<div class="b-form-inputs">
+				{newSlackUser.email}
+			</div>
+
+		</div>
+		<f:form.hidden property="email" value="{newSlackUser.email}"/>
+		<f:form.submit class="bu bu-mini" value="Create TYPO3 Slack account"/>
+	</f:form>
+</f:section>

@@ -1,0 +1,21 @@
+plugin.tx_t3oslack {
+	view {
+		templateRootPath = {$plugin.tx_t3oslack.view.templateRootPath}
+		partialRootPath = {$plugin.tx_t3oslack.view.partialRootPath}
+		layoutRootPath = {$plugin.tx_t3oslack.view.layoutRootPath}
+	}
+	persistence {
+		storagePid = {$plugin.tx_t3oslack.persistence.storagePid}
+	}
+	features {
+		# uncomment the following line to enable the new Property Mapper.
+		# rewrittenPropertyMapper = 1
+	}
+
+	settings {
+		Slack {
+			TeamUrl = https://busemann.slack.com
+			token = xoxp-14071581157-14075618438-14076459329-ffc8e92357
+		}
+	}
+}
