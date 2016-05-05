@@ -14,8 +14,8 @@ plugin.tx_t3oslack {
 
 	settings {
 		Slack {
-			TeamUrl = https://busemann.slack.com
-			token = xoxp-14071581157-14075618438-14076459329-ffc8e92357
+			TeamUrl = https://XXXX.slack.com
+			token = xxxx-12345678910-12345678910-12345678910-xxxxxxxxxx
 		}
 	}
 }
