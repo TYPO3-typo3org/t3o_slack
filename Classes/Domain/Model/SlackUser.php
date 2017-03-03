@@ -1,9 +1,10 @@
 <?php
+namespace T3o\T3oSlack\Domain\Model;
 
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2015 
+ *  (c) 2015
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,7 +31,8 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_T3oSlack_Domain_Model_SlackUser extends Tx_Extbase_DomainObject_AbstractEntity {
+class SlackUser extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+{
 
     /**
      * first name
@@ -105,4 +107,5 @@ class Tx_T3oSlack_Domain_Model_SlackUser extends Tx_Extbase_DomainObject_Abstrac
 
 
 }
+
 ?>
