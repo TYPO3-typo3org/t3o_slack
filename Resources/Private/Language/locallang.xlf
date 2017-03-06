@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-03-02T21:45:03Z"
+		  product-name="t3o_slack">
+		<header/>
+		<body>
+			<trans-unit id="tx_t3oslack_domain_model_slackuser">
+				<source>SlackUser</source>
+			</trans-unit>
+			<trans-unit id="tx_t3oslack.existingAccount">
+				<source>You have already a slack account with your e-mail</source>
+			</trans-unit>
+			<trans-unit id="tx_t3oslack.apiKeyMissing">
+				<source>The Slack connection is not set up correct. Please inform the adminstrator, that the API key is wrong (missing_scope)</source>
+			</trans-unit>
+			<trans-unit id="tx_t3oslack.noConnection">
+				<source>Sorry - currently we have no connection to slack. Please try later.</source>
+			</trans-unit>
+			<trans-unit id="tx_t3oslack.userCreated">
+				<source>Your new Slack user was created. Please check your e-mail inbox for your credencials.</source>
+			</trans-unit>
+			<trans-unit id="tx_t3oslack.noConfiguration">
+				<source>Error: Configuration for Slack connection is missing. Please check TS Setting team url and API key.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,4 +1,9 @@
 <?php
+namespace T3o\T3oSlack\Controller;
+
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use T3o\T3oSlack\Domain\Model\SlackUser;
 
 /***************************************************************
  *  Copyright notice
@@ -30,7 +35,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Tx_T3oSlack_Controller_SlackUserController extends Tx_Extbase_MVC_Controller_ActionController
+class SlackUserController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
 
     public function initializeAction()
@@ -42,7 +47,6 @@ class Tx_T3oSlack_Controller_SlackUserController extends Tx_Extbase_MVC_Controll
 
         // configuration check
         if (!$this->settings['Slack']['TeamUrl'] or !$this->settings['Slack']['token']) {
-            $this->flashMessageContainer->add(Tx_Extbase_Utility_Localization::translate('tx_t3oslack.noConfiguration', $this->extensionName)  . $message );
             $this->redirect('noAccess');
         }
     }
@@ -50,16 +54,16 @@ class Tx_T3oSlack_Controller_SlackUserController extends Tx_Extbase_MVC_Controll
     /**
      * action new
      *
-     * @param Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser
+     * @param \T3o\T3oSlack\Domain\Model\SlackUser $newSlackUser
      * @dontvalidate $newSlackUser
      * @return void
      */
-    public function newAction(Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser = null)
+    public function newAction(SlackUser $newSlackUser = null)
     {
 
         if ($newSlackUser == null) {
-            /** @var  Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser */
-            $newSlackUser = $this->objectManager->get('Tx_T3oSlack_Domain_Model_SlackUser');
+            /** @var  \T3o\T3oSlack\Domain\Model\SlackUser $newSlackUser */
+            $newSlackUser = $this->objectManager->get('\T3o\T3oSlack\Domain\Model\SlackUser');
 
             // initialize user with fe_user data if there is no object
             $newSlackUser->setFirstname($GLOBALS['TSFE']->fe_user->user['first_name']);
@@ -73,63 +77,64 @@ class Tx_T3oSlack_Controller_SlackUserController extends Tx_Extbase_MVC_Controll
     /**
      * action new
      *
-     * @param Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser
+     * @param \T3o\T3oSlack\Domain\Model\SlackUser $newSlackUser
      * @dontvalidate $newSlackUser
      * @return void
      */
-    public function noAccessAction(Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser = null)
+    public function noAccessAction(SlackUser $newSlackUser = null)
     {
 
     }
 
     /**
      * action create
-     * @param Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser
+     *
+     * @param \T3o\T3oSlack\Domain\Model\SlackUser $newSlackUser
      * @return void
      */
-    public function createAction(Tx_T3oSlack_Domain_Model_SlackUser $newSlackUser)
+    public function createAction(SlackUser $newSlackUser)
     {
 
 
-            // Initialize options for REST interface
-            $adb_url = $this->settings['Slack']['TeamUrl'];
-            $adb_option_defaults = array(
-                CURLOPT_HEADER => false,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT => 2
-            );
+        // Initialize options for REST interface
+        $adb_url = $this->settings['Slack']['TeamUrl'];
+        $adb_option_defaults = array(
+            CURLOPT_HEADER         => false,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 2
+        );
 
-            $adb_handle = curl_init();
+        $adb_handle = curl_init();
 
-            $options = array(
-                CURLOPT_URL => $adb_url . '/api/users.admin.invite',
-                CURLOPT_CUSTOMREQUEST => 'POST', // GET POST PUT PATCH DELETE HEAD OPTIONS
-                CURLOPT_POSTFIELDS => 'email=' . urlencode($newSlackUser->getEmail()) . '&first_name=' . urlencode($newSlackUser->getFirstname()) . '&last_name=' . urlencode($newSlackUser->getLastname()) . '&token=' . $this->settings['Slack']['token'] . '&set_active=true'
-            );
-            curl_setopt_array($adb_handle, ($options + $adb_option_defaults));
+        $options = array(
+            CURLOPT_URL           => $adb_url . '/api/users.admin.invite',
+            CURLOPT_CUSTOMREQUEST => 'POST', // GET POST PUT PATCH DELETE HEAD OPTIONS
+            CURLOPT_POSTFIELDS    => 'email=' . urlencode($newSlackUser->getEmail()) . '&first_name=' . urlencode($newSlackUser->getFirstname()) . '&last_name=' . urlencode($newSlackUser->getLastname()) . '&token=' . $this->settings['Slack']['token'] . '&set_active=true'
+        );
+        curl_setopt_array($adb_handle, ($options + $adb_option_defaults));
 
-            // send request and wait for responce
-            $responce = json_decode(curl_exec($adb_handle), true);
+        // send request and wait for responce
+        $responce = json_decode(curl_exec($adb_handle), true);
 
-            switch ($responce['error']) {
-                case 'already_in_team':
-                    $this->flashMessageContainer->add(Tx_Extbase_Utility_Localization::translate('tx_t3oslack.existingAccount', $this->extensionName)  .  $newSlackUser->getEmail());
-                    break;
-                case 'missing_scope':
-                    $this->flashMessageContainer->add(Tx_Extbase_Utility_Localization::translate('tx_t3oslack.apiKeyMissing', $this->extensionName));
-                    break;
-                default:
-                    if ($responce['error']) {
-                        $message = ' Error code: ' . $responce['error'];
-                    }
-                    $this->flashMessageContainer->add(Tx_Extbase_Utility_Localization::translate('tx_t3oslack.noConnection', $this->extensionName)  . $message );
-                    break;
-            }
-
-            if ($responce['ok']==1) {
-                $this->flashMessageContainer->add(Tx_Extbase_Utility_Localization::translate('tx_t3oslack.userCreated', $this->extensionName));
-            }
+        switch ($responce['error']) {
+            case 'already_in_team':
+                $this->addFlashMessage(LocalizationUtility::translate('tx_t3oslack.existingAccount', $this->extensionName) . $newSlackUser->getEmail(), '', AbstractMessage::WARNING);
+                break;
+            case 'missing_scope':
+                $this->addFlashMessage(LocalizationUtility::translate('tx_t3oslack.apiKeyMissing', $this->extensionName), '', AbstractMessage::ERROR);
+                break;
+            default:
+                if ($responce['error']) {
+                    $message = ' Error code: ' . $responce['error'];
+                }
+                $this->addFlashMessage(LocalizationUtility::translate('tx_t3oslack.noConnection', $this->extensionName) . $message, '', AbstractMessage::ERROR);
+                break;
         }
+
+        if ($responce['ok'] == 1) {
+            $this->addFlashMessage(LocalizationUtility::translate('tx_t3oslack.userCreated', $this->extensionName));
+        }
+    }
 
 }
 
